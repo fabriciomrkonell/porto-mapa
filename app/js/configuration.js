@@ -15,18 +15,27 @@ function initMap() {
 	  rotateControl: false
   });
 
-  new google.maps.drawing.DrawingManager({
+  var drawingManager = new google.maps.drawing.DrawingManager({
     drawingMode: google.maps.drawing.OverlayType.POLYLINE,
     drawingControl: false
-  }).setMap(map);
+  })
+
+  drawingManager.setMap(map);
 
 	map.controls[google.maps.ControlPosition.LEFT_TOP].push(document.getElementById('legend'));
+
+	google.maps.event.addListener(drawingManager, 'polylinecomplete', function(polyline) {
+  	polyline.getPath().forEach(function(poly){
+  		console.log("{ lat: " + poly.lat() + ", lng: " + poly.lng() + " }");
+  	});
+	});
+
 };
 
 angular.module('app').controller('ctrl', ['$scope', function($scope){
 
 	$scope.save = function(){
-		alert('s');
+		alert('save');
 	};
 
 }])

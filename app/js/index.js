@@ -1,10 +1,11 @@
 'use strict';
 
 var map = null,
-		center = null;
+		center = null,
+		socket = io();
 
 function initMap() {
-	center = new google.maps.LatLng(-28.2280632, -48.6567348);
+	center = new google.maps.LatLng(-28.232798907333476, -48.650000997055054);
   map = new google.maps.Map(document.getElementById('map'), {
     zoom: 15,
     center: center,
@@ -28,7 +29,7 @@ angular.module('app').controller('ctrl', ['$scope', '$interval', function($scope
 	});
 
 	function initMap(){
-		new google.maps.Polygon({
+		$scope.polygons = new google.maps.Polygon({
 	    paths: [
 				{ lat: -28.232395907333476, lng: -48.651612997055054 },
 				{ lat: -28.23148846423027, lng: -48.650368452072144 },
@@ -51,7 +52,9 @@ angular.module('app').controller('ctrl', ['$scope', '$interval', function($scope
 	    strokeWeight: 2,
 	    fillColor: '#FF0000',
 	    fillOpacity: 0.35
-	  }).setMap(map);
+	  });
+
+		$scope.polygons.setMap(map);
 
 		$scope.markers['1'] = new google.maps.Marker({
 	    position: map.getCenter(),
@@ -62,11 +65,15 @@ angular.module('app').controller('ctrl', ['$scope', '$interval', function($scope
 	    draggable: false,
 	    map: map
 	  });
+	};
 
+	function isAreaAlert(latlng){
+		return !google.maps.geometry.poly.containsLocation(latlng, $scope.polygons)
 	};
 
 	angular.extend($scope, {
-		markers: {}
+		markers: {},
+		polygons: {}
 	});
 
 	$scope.starLocalize = function(latlng){
@@ -79,13 +86,13 @@ angular.module('app').controller('ctrl', ['$scope', '$interval', function($scope
 		map.setZoom(15);
 	};
 
-	$interval(function(){
-		for(var key in $scope.markers){
-			var pos = $scope.markers[key].position,
-					latlng = new google.maps.LatLng(pos.lat() + 0.0001, pos.lng() + 0.0001)
-    	$scope.markers[key].setPosition(latlng);
-    	$scope.starLocalize(latlng);
-		};
-	}, 1000);
+  socket.on('news', function (data) {
+		var pos = $scope.markers[data.key].position,
+				latlng = new google.maps.LatLng(pos.lat() + 0.0001, pos.lng() + 0.0001)
+  	$scope.markers[data.key].setPosition(latlng);
+  	if(isAreaAlert(latlng)){
+  		$scope.starLocalize(latlng);
+  	}
+  });
 
 }])

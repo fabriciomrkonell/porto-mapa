@@ -24,6 +24,12 @@
 		        <h4 class="modal-title">Áreas</h4>
 		      </div>
 		      <div class="modal-body">
+		      	<form class="form-inline form-inline-modal">
+						  <div class="form-group">
+						    <input type="text" class="form-control" placeholder="Descrição" ng-model="modalEdit.description" ng-disabled="modalEdit === null" ng-blur="updateArea(modalEdit)" />
+						  </div>
+						  <button type="submit" class="btn btn-default" ng-disabled="modalEdit === null" ng-click="editArea(null)">Cancelar</button>
+						</form>
 		        <table class="table table-bordered table-condensed no-margin-bottom">
 		        	<thead>
 		        		<tr>
@@ -49,7 +55,7 @@
 									</td>
 									<td class="text-center">{{area.polygons.length}}</td>
 									<td class="text-center">
-										<button class="btn btn-primary btn-xs" ng-click="updateArea(area, $index)">
+										<button class="btn btn-primary btn-xs" ng-click="editArea(area)">
 											<i class="glyphicon glyphicon-pencil"></i>
 										</button>
 										<button class="btn btn-danger btn-xs" ng-click="deleteArea(area, $index)">

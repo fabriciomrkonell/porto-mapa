@@ -57,7 +57,8 @@ angular.module('app').controller('ctrl', ['$scope', '$http', '$interval', functi
 
   angular.extend($scope, {
     modal: false,
-    areas: []
+    areas: [],
+    modalEdit: null
   });
 
   $http.get('/area').success(function(data){
@@ -75,6 +76,10 @@ angular.module('app').controller('ctrl', ['$scope', '$http', '$interval', functi
 
   $scope.getAreas = function(){
     $scope.modal = true;
+  };
+
+  $scope.editArea = function(item){
+    $scope.modalEdit = item;
   };
 
   $scope.updateArea = function(item){
@@ -99,6 +104,7 @@ angular.module('app').controller('ctrl', ['$scope', '$http', '$interval', functi
   $scope.printArea = function(){
     $scope.areas.forEach(function(item, key){
       if(item._polygons) item._polygons.setMap(null);
+      if(item.visible === false) return false;
       item._polygons = new google.maps.Polygon({
         paths: item.polygons,
         strokeColor: item.color,

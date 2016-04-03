@@ -19,7 +19,7 @@ function initMap() {
   });
 };
 
-angular.module('app').controller('ctrl', ['$scope', '$interval', function($scope, $interval){
+angular.module('app').controller('ctrl', ['$scope', '$interval', '$http', function($scope, $interval, $http){
 
 	var interval = $interval(function(){
 		if(map !== null){
@@ -29,33 +29,6 @@ angular.module('app').controller('ctrl', ['$scope', '$interval', function($scope
 	});
 
 	function initMap(){
-		$scope.polygons = new google.maps.Polygon({
-	    paths: [
-				{ lat: -28.232395907333476, lng: -48.651612997055054 },
-				{ lat: -28.23148846423027, lng: -48.650368452072144 },
-				{ lat: -28.23479681332551, lng: -48.64562630653381 },
-				{ lat: -28.23479681332551, lng: -48.645851612091064 },
-				{ lat: -28.23466448133108, lng: -48.64623785018921 },
-				{ lat: -28.234626672159695, lng: -48.64662408828735 },
-				{ lat: -28.234645576747063, lng: -48.64703178405762 },
-				{ lat: -28.23465502903949, lng: -48.647342920303345 },
-				{ lat: -28.234768456483383, lng: -48.64765405654907 },
-				{ lat: -28.235023667791246, lng: -48.64772915840149 },
-				{ lat: -28.23525052177466, lng: -48.64771842956543 },
-				{ lat: -28.23544901861452, lng: -48.64768624305725 },
-				{ lat: -28.235713680493205, lng: -48.64769697189331 },
-				{ lat: -28.235874367742127, lng: -48.647825717926025 },
-				{ lat: -28.232395907333476, lng: -48.651612997055054 }
-			],
-	    strokeColor: '#FF0000',
-	    strokeOpacity: 0.8,
-	    strokeWeight: 2,
-	    fillColor: '#FF0000',
-	    fillOpacity: 0.35
-	  });
-
-		$scope.polygons.setMap(map);
-
 		$scope.markers['1'] = new google.maps.Marker({
 	    position: map.getCenter(),
 	    icon: {
@@ -65,16 +38,47 @@ angular.module('app').controller('ctrl', ['$scope', '$interval', function($scope
 	    draggable: false,
 	    map: map
 	  });
+	  $scope.printArea();
 	};
 
 	function isAreaAlert(latlng){
-		return !google.maps.geometry.poly.containsLocation(latlng, $scope.polygons)
+		var exit = false;
+		$scope.areas.forEach(function(item){
+			if(google.maps.geometry.poly.containsLocation(latlng, item._polygons)) return false;
+			exit = true;
+		});
+		return exit;
 	};
 
 	angular.extend($scope, {
 		markers: {},
-		polygons: {}
+		areas: []
 	});
+
+	$http.get('/area').success(function(data){
+		var areas = [];
+		data.data.forEach(function(item){
+			if(item.active === false) return false;
+			areas.push(item);
+		});
+    $scope.areas = areas;
+    if(map !== null) $scope.printArea();
+  });
+
+  $scope.printArea = function(){
+    $scope.areas.forEach(function(item, key){
+      if(item._polygons) item._polygons.setMap(null);
+      item._polygons = new google.maps.Polygon({
+        paths: item.polygons,
+        strokeColor: item.color,
+        strokeOpacity: 0.2,
+        strokeWeight: 2,
+        fillColor: item.color,
+        fillOpacity: 0.35
+      });
+      item._polygons.setMap(map);
+    });
+  };
 
 	$scope.starLocalize = function(latlng){
 		map.setCenter(latlng);

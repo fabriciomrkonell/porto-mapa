@@ -83,6 +83,7 @@ angular.module('app').controller('ctrl', ['$scope', '$http', '$interval', functi
   };
 
   $scope.updateArea = function(item){
+    $scope.modalEdit = null;
     $http.post('/area/update', {
       _id: item._id,
       color: item.color,
@@ -95,6 +96,7 @@ angular.module('app').controller('ctrl', ['$scope', '$http', '$interval', functi
   };
 
   $scope.deleteArea = function(item, index){
+    $scope.modalEdit = null;
     $http.delete('/area/' + item._id).success(function(){
       item._polygons.setMap(null);
       $scope.areas.splice(index, 1);

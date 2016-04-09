@@ -29,6 +29,9 @@ angular.module('app').controller('ctrl', ['$scope', '$interval', '$http', functi
 	});
 
 	function initMap(){
+
+		map.controls[google.maps.ControlPosition.RIGHT_CENTER].push(document.getElementById('panel'));
+
 		$scope.markers['1'] = new google.maps.Marker({
 	    position: map.getCenter(),
 	    icon: {
@@ -38,12 +41,14 @@ angular.module('app').controller('ctrl', ['$scope', '$interval', '$http', functi
 	    draggable: false,
 	    map: map
 	  });
+
 	  $scope.printArea();
 	};
 
 	function isAreaAlert(latlng){
 		var exit = false;
 		$scope.areas.forEach(function(item){
+			console.log(google.maps.geometry.poly.containsLocation(latlng, item._polygons))
 			if(google.maps.geometry.poly.containsLocation(latlng, item._polygons)) return false;
 			exit = true;
 		});

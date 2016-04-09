@@ -12,6 +12,23 @@
 	</head>
 	<body class="ng-cloak" ng-controller="ctrl">
 		<div id="map"></div>
+		<div id="panel" class="panel-description-user">
+			<div class="panel panel-default panel-default-user">
+			  <div class="panel-body">
+			    <form>
+					  <div class="form-group no-margin-bottom">
+					  	<img src="/app/img/user.png" class="img-user" />
+					  	<br/>
+					    <label>Nome Qualquer Nome</label>
+					    <br/>
+					    <label>01/01/2012	</label>
+					    <br/>
+					    <label class="no-margin-bottom">Empresa SA</label>
+					  </div>
+					</form>
+			  </div>
+			</div>
+		</div>
 		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAa79lG1wms2diBsx5jZiqGH4gm1rHRg88&callback=initMap" async defer></script>
 		<script src="/socket.io/socket.io.js"></script>
 		<script src="/app/vendor/angular/angular.min.js"></script>

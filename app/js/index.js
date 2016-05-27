@@ -5,10 +5,8 @@ var map = null,
 		socket = io();
 
 function initMap() {
-	center = new google.maps.LatLng(-28.232798907333476, -48.650000997055054);
   map = new google.maps.Map(document.getElementById('map'), {
     zoom: 15,
-    center: center,
     mapTypeId: google.maps.MapTypeId.ROADMAP,
     mapTypeControl: false,
     zoomControl: true,
@@ -19,7 +17,7 @@ function initMap() {
   });
 };
 
-angular.module('app').controller('ctrl', ['$scope', '$interval', '$http', function($scope, $interval, $http){
+angular.module('app').controller('ctrl', ['$scope', '$interval', '$http', 'Constant', function($scope, $interval, $http, Constant){
 
 	var interval = $interval(function(){
 		if(map !== null){
@@ -29,10 +27,20 @@ angular.module('app').controller('ctrl', ['$scope', '$interval', '$http', functi
 	});
 
 	function initMap(){
+		map.setCenter(new google.maps.LatLng(Constant.initialPosition.Lat, Constant.initialPosition.Lng));
+	  $scope.printArea();
+	};
 
-		map.controls[google.maps.ControlPosition.RIGHT_CENTER].push(document.getElementById('panel'));
+	function isAreaAlert(latlng){
+		var exit = true;
+		$scope.areas.forEach(function(item){
+			if(google.maps.geometry.poly.containsLocation(latlng, item._polygons)) exit = false;
+		});
+		return exit;
+	};
 
-		$scope.markers['1'] = new google.maps.Marker({
+	function createUser(key){
+		$scope.markers[key] = new google.maps.Marker({
 	    position: map.getCenter(),
 	    icon: {
 	      path: google.maps.SymbolPath.CIRCLE,
@@ -41,18 +49,6 @@ angular.module('app').controller('ctrl', ['$scope', '$interval', '$http', functi
 	    draggable: false,
 	    map: map
 	  });
-
-	  $scope.printArea();
-	};
-
-	function isAreaAlert(latlng){
-		var exit = false;
-		$scope.areas.forEach(function(item){
-			console.log(google.maps.geometry.poly.containsLocation(latlng, item._polygons))
-			if(google.maps.geometry.poly.containsLocation(latlng, item._polygons)) return false;
-			exit = true;
-		});
-		return exit;
 	};
 
 	angular.extend($scope, {
@@ -87,6 +83,7 @@ angular.module('app').controller('ctrl', ['$scope', '$interval', '$http', functi
 
 	$scope.starLocalize = function(latlng){
 		map.setCenter(latlng);
+		//map.controls[google.maps.ControlPosition.RIGHT_CENTER].push(document.getElementById('panel'));
 		map.setZoom(19);
 	};
 
@@ -96,8 +93,11 @@ angular.module('app').controller('ctrl', ['$scope', '$interval', '$http', functi
 	};
 
   socket.on('news', function (data) {
+  	if($scope.markers[data.key] === undefined){
+  		createUser(data.key);
+  	}
 		var pos = $scope.markers[data.key].position,
-				latlng = new google.maps.LatLng(pos.lat() + 0.0001, pos.lng() + 0.0001)
+				latlng = new google.maps.LatLng(pos.lat() + 0.0001, pos.lng() + 0.0001);
   	$scope.markers[data.key].setPosition(latlng);
   	if(isAreaAlert(latlng)){
   		$scope.starLocalize(latlng);

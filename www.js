@@ -9,6 +9,7 @@ var express = require('express'),
     io = require('socket.io')(server),
     mongoose = require('mongoose'),
     db = mongoose.connection,
+    compression = require('compression'),
     bodyParser = require('body-parser');
 
 mongoose.connect('mongodb://localhost/porto-mapa');
@@ -19,6 +20,7 @@ db.on('error', function(){
   console.log('Database: success.');
 });
 
+app.use(compression());
 app.set('view engine', 'html');
 app.set('views', __dirname + '/views');
 app.set('view cache', true);
@@ -33,7 +35,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/', routes_index);
 app.use('/area', routes_area);
 
-app.use('/socket', function(req, res, next){
+app.get('/socket', function(req, res, next){
 	io.sockets.emit('news', { key: 1 });
 	res.sendStatus(200);
 });

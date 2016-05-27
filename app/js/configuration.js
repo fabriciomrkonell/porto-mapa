@@ -5,7 +5,6 @@ var map = null;
 function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
     zoom: 14,
-    center: new google.maps.LatLng(-28.2280632, -48.6567348),
     mapTypeId: google.maps.MapTypeId.ROADMAP,
     mapTypeControl: false,
     zoomControl: true,
@@ -16,7 +15,7 @@ function initMap() {
   });
 };
 
-angular.module('app').controller('ctrl', ['$scope', '$http', '$interval', function($scope, $http, $interval){
+angular.module('app').controller('ctrl', ['$scope', '$http', '$interval', 'Constant', function($scope, $http, $interval, Constant){
 
   var interval = $interval(function(){
     if(map !== null){
@@ -26,6 +25,9 @@ angular.module('app').controller('ctrl', ['$scope', '$http', '$interval', functi
   });
 
   function initMap(){
+
+    map.setCenter(new google.maps.LatLng(Constant.initialPosition.Lat, Constant.initialPosition.Lng));
+
     var drawingManager = new google.maps.drawing.DrawingManager({
       drawingMode: google.maps.drawing.OverlayType.POLYLINE,
       drawingControl: false
@@ -80,6 +82,15 @@ angular.module('app').controller('ctrl', ['$scope', '$http', '$interval', functi
 
   $scope.editArea = function(item){
     $scope.modalEdit = item;
+  };
+
+  $scope.searchArea = function(item){
+    var bounds = new google.maps.LatLngBounds();
+    item.polygons.forEach(function(polygon){
+      bounds.extend(new google.maps.LatLng(polygon.lat, polygon.lng));
+    });
+    map.setCenter(bounds.getCenter());
+    $scope.cancel();
   };
 
   $scope.updateArea = function(item){

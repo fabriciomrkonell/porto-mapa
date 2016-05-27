@@ -15,6 +15,7 @@
     "mongoose": "4.4.10",
     "morgan": "1.7.0",
     "cookie-parser": "1.4.1",
-    "body-parser": "1.15.0"
+    "body-parser": "1.15.0",
+    "compression": "1.6.2"
   }
 }

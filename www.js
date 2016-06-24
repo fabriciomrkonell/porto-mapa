@@ -4,6 +4,7 @@ var express = require('express'),
     path = require('path'),
     routes_index = require('./routes/index'),
     routes_area = require('./routes/area'),
+    routes_router = require('./routes/router'),
     app = express(),
     server = require('http').Server(app),
     io = require('socket.io')(server),
@@ -34,6 +35,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use('/', routes_index);
 app.use('/area', routes_area);
+app.use('/router', routes_router);
 
 app.get('/socket', function(req, res, next){
 	io.sockets.emit('news', { key: 1 });

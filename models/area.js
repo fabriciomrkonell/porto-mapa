@@ -5,10 +5,6 @@ var mongoose = require('mongoose'),
 
 var Area = mongoose.model('Area', new Schema({
   description: String,
-  color: String,
-  visible: Boolean,
-  active: Boolean,
-  polygons: Array,
   update_at: Date,
   created_at: Date
 }));

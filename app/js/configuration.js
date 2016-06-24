@@ -4,8 +4,8 @@ var map = null;
 
 function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 14,
-    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    zoom: 16,
+    mapTypeId: google.maps.MapTypeId.SATELLITE,
     mapTypeControl: false,
     zoomControl: true,
 	  mapTypeControl: false,
@@ -43,33 +43,44 @@ angular.module('app').controller('ctrl', ['$scope', '$http', '$interval', 'Const
         polys.push({ lat: poly.lat(), lng: poly.lng() })
       });
 
-      $http.post('/area', {
-        description: 'Nova área',
+      $http.post('/router', {
+        mac: 'Novo roteador',
         polygons: polys
       }).success(function(data){
-        $scope.areas.push(data.data);
-        $scope.printArea();
+        $scope.routers.push(data.data);
+        $scope.printRouter();
         polyline.setMap(null);
-        $scope.modal = true;
+        $scope.modalRouter = true;
       });
+
     });
 
-    $scope.printArea();
+    $scope.printRouter();
   };
 
   angular.extend($scope, {
     modal: false,
     areas: [],
-    modalEdit: null
+    routers: [],
+    modalEditArea: null,
+    modalEditRouter: null
   });
 
   $http.get('/area').success(function(data){
     $scope.areas = data.data;
-    if(map !== null) $scope.printArea();
   });
 
-  $scope.cancel = function(){
-    $scope.modal = false;
+  $http.get('/router').success(function(data){
+    $scope.routers = data.data;
+    if(map !== null) $scope.printRouter();
+  });
+
+  $scope.cancelArea = function(){
+    $scope.modalArea = false;
+  };
+
+  $scope.cancelRouter = function(){
+    $scope.modalRouter = false;
   };
 
 	$scope.reload = function(){
@@ -77,14 +88,22 @@ angular.module('app').controller('ctrl', ['$scope', '$http', '$interval', 'Const
 	};
 
   $scope.getAreas = function(){
-    $scope.modal = true;
+    $scope.modalArea = true;
+  };
+
+  $scope.getRouters = function(){
+    $scope.modalRouter = true;
   };
 
   $scope.editArea = function(item){
-    $scope.modalEdit = item;
+    $scope.modalEditArea = item;
   };
 
-  $scope.searchArea = function(item){
+  $scope.editRouter = function(item){
+    $scope.modalEditRouter = item;
+  };
+
+  $scope.searchRouter = function(item){
     var bounds = new google.maps.LatLngBounds();
     item.polygons.forEach(function(polygon){
       bounds.extend(new google.maps.LatLng(polygon.lat, polygon.lng));
@@ -94,30 +113,54 @@ angular.module('app').controller('ctrl', ['$scope', '$http', '$interval', 'Const
   };
 
   $scope.updateArea = function(item){
-    $scope.modalEdit = null;
+    $scope.modalEditArea = null;
     $http.post('/area/update', {
       _id: item._id,
+      description: item.description
+    });
+  };
+
+  $scope.newArea = function(){
+    $scope.modalEditArea = null;
+    $http.post('/area', {
+      description: 'Nova área'
+    }).success(function(data){
+      $scope.areas.push(data.data);
+      $scope.modalArea = true;
+    });
+  };
+
+  $scope.updateRouter = function(item){
+    $scope.modalEditRouter = null;
+    $http.post('/router/update', {
+      _id: item._id,
       color: item.color,
-      description: item.description,
-      active: item.active,
-      visible: item.visible
+      areaId: item.areaId,
+      mac: item.mac
     }).success(function(){
-      $scope.printArea();
+      $scope.printRouter();
     });
   };
 
   $scope.deleteArea = function(item, index){
-    $scope.modalEdit = null;
+    $scope.modalEditArea = null;
     $http.delete('/area/' + item._id).success(function(){
       item._polygons.setMap(null);
       $scope.areas.splice(index, 1);
     });
   };
 
-  $scope.printArea = function(){
-    $scope.areas.forEach(function(item, key){
+  $scope.deleteRouter = function(item, index){
+    $scope.modalEditRouter = null;
+    $http.delete('/router/' + item._id).success(function(){
+      item._polygons.setMap(null);
+      $scope.routers.splice(index, 1);
+    });
+  };
+
+  $scope.printRouter = function(){
+    $scope.routers.forEach(function(item, key){
       if(item._polygons) item._polygons.setMap(null);
-      if(item.visible === false) return false;
       item._polygons = new google.maps.Polygon({
         paths: item.polygons,
         strokeColor: item.color,

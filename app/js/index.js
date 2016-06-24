@@ -6,8 +6,8 @@ var map = null,
 
 function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 15,
-    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    zoom: 10,
+    mapTypeId: google.maps.MapTypeId.SATELLITE,
     mapTypeControl: false,
     zoomControl: true,
 	  mapTypeControl: false,

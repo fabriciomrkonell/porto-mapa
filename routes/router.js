@@ -17,6 +17,8 @@ router.post('/', function(req, res, next) {
   router.color = '#000000';
   router.polygons = req.body.polygons;
   router.areaId = req.body.areaId;
+  router.lat = 0;
+  router.lng = 0;
   router.update_at = new Date;
   router.created_at = new Date;
   router.save(function(err, data) {
@@ -33,6 +35,20 @@ router.post('/update', function(req, res, next) {
     router.mac = req.body.mac;
     router.color = req.body.color;
     router.areaId = req.body.areaId;
+    router.update_at = new Date;
+    router.save(function(err, data) {
+      res.send({ error: false, message: 'Router: success.', data: data });
+    });
+  });
+});
+
+router.post('/update-localization', function(req, res, next) {
+  Router.findById(req.body._id, function(err, router) {
+    if(router === null){
+      throw console.log({ error: true, message: 'Router: error.', data: err });
+    }
+    router.lat = req.body.lat;
+    router.lng = req.body.lng;
     router.update_at = new Date;
     router.save(function(err, data) {
       res.send({ error: false, message: 'Router: success.', data: data });

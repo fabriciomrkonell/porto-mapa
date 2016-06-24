@@ -1,6 +1,7 @@
 'use strict';
 
-var map = null;
+var map = null,
+    drawingManager = null;
 
 function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
@@ -28,10 +29,10 @@ angular.module('app').controller('ctrl', ['$scope', '$http', '$interval', 'Const
 
     map.setCenter(new google.maps.LatLng(Constant.initialPosition.Lat, Constant.initialPosition.Lng));
 
-    var drawingManager = new google.maps.drawing.DrawingManager({
+    drawingManager = new google.maps.drawing.DrawingManager({
       drawingMode: google.maps.drawing.OverlayType.POLYLINE,
       drawingControl: false
-    })
+    });
 
     drawingManager.setMap(map);
 
@@ -52,7 +53,27 @@ angular.module('app').controller('ctrl', ['$scope', '$http', '$interval', 'Const
         polyline.setMap(null);
         $scope.modalRouter = true;
       });
+    });
 
+    google.maps.event.addListener(drawingManager, 'markercomplete', function(marker) {
+      $http.post('/router/update-localization', {
+        _id: $scope.objectRouterEdit._id,
+        lat: marker.getPosition().lat(),
+        lng: marker.getPosition().lng()
+      }).success(function(data){
+        $scope.routers.forEach(function(item){
+          if(item._id === $scope.objectRouterEdit._id){
+            item.lat = marker.getPosition().lat();
+            item.lng = marker.getPosition().lng();
+            item._marker.setMap(null);
+            item._marker = marker;
+            item._marker.setMap(map);
+          }
+        });
+        $scope.objectRouterEdit = null;
+        $scope.modalRouter = true;
+      });
+      drawingManager.setDrawingMode(google.maps.drawing.OverlayType.POLYLINE);
     });
 
     $scope.printRouter();
@@ -62,6 +83,7 @@ angular.module('app').controller('ctrl', ['$scope', '$http', '$interval', 'Const
     modal: false,
     areas: [],
     routers: [],
+    objectRouterEdit: null,
     modalEditArea: null,
     modalEditRouter: null
   });
@@ -77,6 +99,12 @@ angular.module('app').controller('ctrl', ['$scope', '$http', '$interval', 'Const
 
   $scope.cancelArea = function(){
     $scope.modalArea = false;
+  };
+
+  $scope.addLocalizationRouter = function(router){
+    $scope.cancelRouter();
+    drawingManager.setDrawingMode(google.maps.drawing.OverlayType.MARKER);
+    $scope.objectRouterEdit = router;
   };
 
   $scope.cancelRouter = function(){
@@ -154,6 +182,7 @@ angular.module('app').controller('ctrl', ['$scope', '$http', '$interval', 'Const
     $scope.modalEditRouter = null;
     $http.delete('/router/' + item._id).success(function(){
       item._polygons.setMap(null);
+      item._marker.setMap(null);
       $scope.routers.splice(index, 1);
     });
   };
@@ -161,6 +190,10 @@ angular.module('app').controller('ctrl', ['$scope', '$http', '$interval', 'Const
   $scope.printRouter = function(){
     $scope.routers.forEach(function(item, key){
       if(item._polygons) item._polygons.setMap(null);
+      if(item._marker) item._marker.setMap(null);
+      item._marker = new google.maps.Marker({
+        position: new google.maps.LatLng(item.lat, item.lng)
+      });
       item._polygons = new google.maps.Polygon({
         paths: item.polygons,
         strokeColor: item.color,
@@ -170,6 +203,7 @@ angular.module('app').controller('ctrl', ['$scope', '$http', '$interval', 'Const
         fillOpacity: 0.35
       });
       item._polygons.setMap(map);
+      item._marker.setMap(map);
     });
   };
 

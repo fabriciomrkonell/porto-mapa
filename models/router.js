@@ -7,6 +7,8 @@ var Router = mongoose.model('Router', new Schema({
   mac: String,
   color: String,
   polygons: Array,
+  lat: Number,
+  lng: Number,
   update_at: Date,
   created_at: Date,
   areaId: { type: Schema.Types.ObjectId, ref: 'Area' }

@@ -28,7 +28,7 @@ angular.module('app').controller('ctrl', ['$scope', '$interval', '$http', 'Const
 
   setInterval(function(){
     $scope.routers.forEach(function(item, key){
-      item._marker.set('text', Math.floor(Math.random() * 100));
+      item._marker.set('text', Math.floor(Math.random() * 999));
     });
   }, 1000);
 
@@ -71,10 +71,9 @@ angular.module('app').controller('ctrl', ['$scope', '$interval', '$http', 'Const
     item.polygons.forEach(function(polygon){
       bounds.extend(new google.maps.LatLng(polygon.lat, polygon.lng));
     });
-    console.log(bounds.getCenter());
     item._marker = new MapLabel({
       text: '',
-      position: new google.maps.LatLng(bounds.getCenter().lat() + 0.00015, bounds.getCenter().lng()),
+      position: new google.maps.LatLng(bounds.getCenter().lat() + 0.00013, bounds.getCenter().lng()),
       map: map,
       fontSize: 20,
       strokeColor: '#FFF',
@@ -85,11 +84,12 @@ angular.module('app').controller('ctrl', ['$scope', '$interval', '$http', 'Const
 
   $scope.printRouter = function(){
     $scope.routers.forEach(function(item, key){
+      $scope.writeText(item);
       if(item._polygons) item._polygons.setMap(null);
       item._polygons = new google.maps.Polygon({
         paths: item.polygons,
         strokeColor: item.color,
-        strokeOpacity: 0.2,
+        strokeOpacity: 0.8,
         strokeWeight: 2,
         fillColor: item.color,
         fillOpacity: 0.35
@@ -104,7 +104,6 @@ angular.module('app').controller('ctrl', ['$scope', '$interval', '$http', 'Const
           $scope.$apply();
         }
       });
-      $scope.writeText(item);
     });
   };
 }])

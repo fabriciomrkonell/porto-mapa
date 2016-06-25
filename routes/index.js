@@ -11,4 +11,8 @@ router.get('/configuration', function(req, res, next) {
  res.sendfile('./view/configuration.html');
 });
 
+router.get('/login', function(req, res, next) {
+ res.sendfile('./view/login.html');
+});
+
 module.exports = router;

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Porto - Login</title>
+    <link rel="shortcut icon" href="/app/img/logo.png">
+    <link rel="mask-icon" href="/app/img/logo.png">
+    <link rel="stylesheet" type="text/css" href="/app/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/app/css/login.css">
+  </head>
+  <body>
+     <main class="main-content">
+      <div class="hello">
+        <div class="container">
+          <form class="form-signin" method="POST" action="/login">
+            <h2 class="text-center">SENSUL</h2>
+            <label class="sr-only">Email</label>
+            <input type="text" class="form-control" placeholder="Email" required="" autofocus="" name="username" id="username">
+            <label class="sr-only">Senha</label>
+            <input type="password" class="form-control" placeholder="Senha" required="" name="password" id="password">
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" id="check"> Salvar email e senha
+              </label>
+            </div>
+            <button class="btn btn-lg btn-primary btn-block" type="submit" onclick="login()">Entrar</button>
+          </form>
+        </div>
+      </div>
+    </main>
+    <script type="text/javascript">
+
+    var username = document.getElementById('username'),
+        password = document.getElementById('password'),
+        check = document.getElementById('check');
+
+    function login(){
+      setCookie('check', check.checked);
+      if(check.checked){
+        setCookie('username', username.value);
+        setCookie('password', password.value);
+      }else{
+        setCookie('username', '');
+        setCookie('password', '');
+      }
+    }
+
+    username.value = getCookie('username');
+    password.value = getCookie('password');
+    check.checked = getCookie('check') === 'true';
+
+    function setCookie(cname, cvalue) {
+      var d = new Date();
+      d.setTime(d.getTime() + (365*24*60*60*1000));
+      var expires = "expires="+ d.toUTCString();
+      document.cookie = cname + "=" + cvalue + "; " + expires;
+    };
+
+    function getCookie(cname) {
+      var name = cname + "=";
+      var ca = document.cookie.split(';');
+      for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') {
+          c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+          return c.substring(name.length,c.length);
+        }
+      }
+      return '';
+    };
+
+    </script>
+  </body>
+</html>

@@ -12,21 +12,22 @@ html, body{
   height: 100%;
 }
 
-.panel-description-user{
-	margin-right: 10px;
-	font-size: 30px;
-	text-align: center;
+.modal-show{
+	display: block;
+}
+
+.modal-dialog {
+  width: 700px;
 }
 
 .no-margin-bottom{
 	margin-bottom: 0px !important;
 }
 
-.panel-default-user{
-	background-color: rgba(255, 255, 255, 0.5);
-  border-color: rgba(255, 255, 255, 0.5);
+.form-inline-modal{
+  margin-bottom: 15px;
 }
 
-.img-user{
-	width: 200px;
+.form-control-input{
+  width: 200px !important;
 }

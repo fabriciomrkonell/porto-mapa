@@ -4,6 +4,11 @@ var express = require('express'),
 		router = express.Router(),
 		Router = require('../models/router');
 
+router.get('/number.png', function(req, res, next) {
+  res.writeHead(200, {'Content-Type': 'image/png' });
+  res.end("1", 'binary');
+});
+
 router.get('/', function(req, res, next) {
 	Router.find().exec(function(err, data) {
     if (err) throw console.log({ error: true, message: 'Router: error.', data: err });

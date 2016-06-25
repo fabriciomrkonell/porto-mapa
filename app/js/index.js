@@ -15,6 +15,8 @@ function initMap() {
   });
 };
 
+initMap();
+
 angular.module('app').controller('ctrl', ['$scope', '$interval', '$http', 'Constant', function($scope, $interval, $http, Constant){
 
   var interval = $interval(function(){
@@ -24,13 +26,21 @@ angular.module('app').controller('ctrl', ['$scope', '$interval', '$http', 'Const
     }
   });
 
+  setInterval(function(){
+    $scope.routers.forEach(function(item, key){
+      item._marker.set('text', Math.floor(Math.random() * 100));
+    });
+  }, 5000);
+
 	function initMap(){
 		map.setCenter(new google.maps.LatLng(Constant.initialPosition.Lat, Constant.initialPosition.Lng));
 	  $scope.printRouter();
 	};
 
 	angular.extend($scope, {
-		routers: []
+		routers: [],
+    modalRouterObject: null,
+    modalRouter: false
 	});
 
 	$http.get('/router').success(function(data){
@@ -38,15 +48,24 @@ angular.module('app').controller('ctrl', ['$scope', '$interval', '$http', 'Const
     if(map !== null) $scope.printRouter();
   });
 
-  $scope.writeText = function(polygons){
+  $scope.cancelRouter = function(){
+    $scope.modalRouter = false;
+    $scope.modalRouterObject = null;
+  };
+
+  $scope.writeText = function(item){
     var bounds = new google.maps.LatLngBounds();
-    polygons.forEach(function(polygon){
+    item.polygons.forEach(function(polygon){
       bounds.extend(new google.maps.LatLng(polygon.lat, polygon.lng));
     });
-    var marker = new google.maps.Marker({
+    item._marker = new MapLabel({
+      text: '',
       position: bounds.getCenter(),
-      label: 'dasddasdasa',
-      map: map
+      map: map,
+      fontSize: 20,
+      strokeColor: '#FFF',
+      strokeWeight: 0,
+      fontColor: '#FFF'
     });
   };
 
@@ -62,7 +81,16 @@ angular.module('app').controller('ctrl', ['$scope', '$interval', '$http', 'Const
         fillOpacity: 0.35
       });
       item._polygons.setMap(map);
-      $scope.writeText(item.polygons);
+      item._polygons.addListener('click', function() {
+        $scope.modalRouterObject = {
+          mac: item.mac
+        };
+        $scope.modalRouter = true;
+        if (!$scope.$$phase) {
+          $scope.$apply();
+        }
+      });
+      $scope.writeText(item);
     });
   };
 }])

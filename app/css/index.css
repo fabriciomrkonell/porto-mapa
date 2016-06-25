@@ -1,14 +1,18 @@
-.ng-cloak{
+.ng-cloak {
 	display: none;
 }
 
-html, body{
+html, body {
   height: 100%;
   margin: 0;
   padding: 0;
 }
 
-#map{
+.modal-body-user {
+	display: -webkit-box;
+}
+
+#map {
   height: 100%;
 }
 
@@ -20,14 +24,23 @@ html, body{
   width: 700px;
 }
 
-.no-margin-bottom{
+.no-margin-bottom {
 	margin-bottom: 0px !important;
 }
 
-.form-inline-modal{
+.form-inline-modal {
   margin-bottom: 15px;
 }
 
-.form-control-input{
+.form-control-input {
   width: 200px !important;
+}
+
+.img-user {
+	width: 170px;
+	margin-bottom: 15px;
+}
+
+.td-user {
+	width: 170px;
 }

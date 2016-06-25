@@ -2,12 +2,8 @@
 
 var express = require('express'),
 		router = express.Router(),
+    service = require('../services/service'),
 		Router = require('../models/router');
-
-router.get('/number.png', function(req, res, next) {
-  res.writeHead(200, {'Content-Type': 'image/png' });
-  res.end("1", 'binary');
-});
 
 router.get('/', function(req, res, next) {
 	Router.find().exec(function(err, data) {
@@ -16,7 +12,7 @@ router.get('/', function(req, res, next) {
   });
 });
 
-router.post('/', function(req, res, next) {
+router.post('/', service.isAdmin, function(req, res, next) {
 	var router = new Router();
 	router.mac = req.body.mac,
   router.color = '#000000';
@@ -32,7 +28,7 @@ router.post('/', function(req, res, next) {
 	});
 });
 
-router.post('/update', function(req, res, next) {
+router.post('/update', service.isAdmin, function(req, res, next) {
   Router.findById(req.body._id, function(err, router) {
     if(router === null){
       throw console.log({ error: true, message: 'Router: error.', data: err });
@@ -47,7 +43,7 @@ router.post('/update', function(req, res, next) {
   });
 });
 
-router.post('/update-localization', function(req, res, next) {
+router.post('/update-localization', service.isAdmin, function(req, res, next) {
   Router.findById(req.body._id, function(err, router) {
     if(router === null){
       throw console.log({ error: true, message: 'Router: error.', data: err });
@@ -61,7 +57,7 @@ router.post('/update-localization', function(req, res, next) {
   });
 });
 
-router.delete('/:id', function(req, res, next) {
+router.delete('/:id', service.isAdmin, function(req, res, next) {
   Router.remove({
     _id: req.param('id')
   }, function(err, data) {

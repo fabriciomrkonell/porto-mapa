@@ -30,7 +30,7 @@ angular.module('app').controller('ctrl', ['$scope', '$interval', '$http', 'Const
     $scope.routers.forEach(function(item, key){
       item._marker.set('text', Math.floor(Math.random() * 100));
     });
-  }, 5000);
+  }, 1000);
 
 	function initMap(){
 		map.setCenter(new google.maps.LatLng(Constant.initialPosition.Lat, Constant.initialPosition.Lng));
@@ -40,7 +40,9 @@ angular.module('app').controller('ctrl', ['$scope', '$interval', '$http', 'Const
 	angular.extend($scope, {
 		routers: [],
     modalRouterObject: null,
-    modalRouter: false
+    modalUserObject: null,
+    modalRouter: false,
+    modalUser: false
 	});
 
 	$http.get('/router').success(function(data){
@@ -48,9 +50,20 @@ angular.module('app').controller('ctrl', ['$scope', '$interval', '$http', 'Const
     if(map !== null) $scope.printRouter();
   });
 
+  $scope.getUser = function(){
+    $scope.modalUser = true;
+    $scope.modalRouter = false;
+  };
+
   $scope.cancelRouter = function(){
     $scope.modalRouter = false;
     $scope.modalRouterObject = null;
+  };
+
+  $scope.cancelUser = function(){
+    $scope.modalUser = false;
+    $scope.modalUserObject = null;
+    $scope.modalRouter = true;
   };
 
   $scope.writeText = function(item){
@@ -58,9 +71,10 @@ angular.module('app').controller('ctrl', ['$scope', '$interval', '$http', 'Const
     item.polygons.forEach(function(polygon){
       bounds.extend(new google.maps.LatLng(polygon.lat, polygon.lng));
     });
+    console.log(bounds.getCenter());
     item._marker = new MapLabel({
       text: '',
-      position: bounds.getCenter(),
+      position: new google.maps.LatLng(bounds.getCenter().lat() + 0.00015, bounds.getCenter().lng()),
       map: map,
       fontSize: 20,
       strokeColor: '#FFF',

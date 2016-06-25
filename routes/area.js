@@ -2,6 +2,7 @@
 
 var express = require('express'),
 		router = express.Router(),
+    service = require('../services/service'),
 		Area = require('../models/area');
 
 router.get('/', function(req, res, next) {
@@ -11,7 +12,7 @@ router.get('/', function(req, res, next) {
   });
 });
 
-router.post('/', function(req, res, next) {
+router.post('/', service.isAdmin, function(req, res, next) {
 	var area = new Area();
 	area.description = req.body.description,
   area.update_at = new Date;
@@ -22,7 +23,7 @@ router.post('/', function(req, res, next) {
 	});
 });
 
-router.post('/update', function(req, res, next) {
+router.post('/update', service.isAdmin, function(req, res, next) {
   Area.findById(req.body._id, function(err, area) {
     if(area === null){
       throw console.log({ error: true, message: 'Area: error.', data: err });
@@ -35,7 +36,7 @@ router.post('/update', function(req, res, next) {
   });
 });
 
-router.delete('/:id', function(req, res, next) {
+router.delete('/:id', service.isAdmin, function(req, res, next) {
   Area.remove({
     _id: req.param('id')
   }, function(err, data) {

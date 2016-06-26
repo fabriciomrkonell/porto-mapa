@@ -39,16 +39,16 @@
     function login(){
       setCookie('check', check.checked);
       if(check.checked){
-        setCookie('username', username.value);
-        setCookie('password', password.value);
+        setCookie('usernameSensul', username.value);
+        setCookie('passwordSensul', password.value);
       }else{
-        setCookie('username', '');
-        setCookie('password', '');
+        setCookie('usernameSensul', '');
+        setCookie('passwordSensul', '');
       }
     }
 
-    username.value = getCookie('username');
-    password.value = getCookie('password');
+    username.value = getCookie('usernameSensul');
+    password.value = getCookie('passwordSensul');
     check.checked = getCookie('check') === 'true';
 
     function setCookie(cname, cvalue) {

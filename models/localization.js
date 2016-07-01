@@ -7,7 +7,7 @@ var Localization = mongoose.model('Localization', new Schema({
   badge: String,
   AP: String,
   signal: Number,
-  date: Date
+  date: Number
 }));
 
 module.exports = Localization;

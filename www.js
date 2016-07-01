@@ -6,6 +6,7 @@ var express = require('express'),
     routes_home = require('./routes/home'),
     routes_area = require('./routes/area'),
     routes_router = require('./routes/router'),
+    routes_badge = require('./routes/badge'),
     app = express(),
     server = require('http').Server(app),
     io = require('socket.io')(server),
@@ -22,6 +23,7 @@ var express = require('express'),
     User = require('./models/user');
 
 mongoose.connect('mongodb://10.0.109.113:27017/porto-mapa');
+//mongoose.connect('mongodb://192.168.1.189:27017/porto-mapa');
 
 db.on('error', function(){
   console.log('Database: error.');
@@ -57,6 +59,7 @@ app.use('/', routes_index);
 app.use('/', service.isAutenticate, routes_home);
 app.use('/area', service.isAutenticate, routes_area);
 app.use('/router', service.isAutenticate, routes_router);
+app.use('/badge', service.isAutenticate, routes_badge);
 
 app.get('/socket', function(req, res, next){
 	io.sockets.emit('news', { key: 1 });
@@ -65,5 +68,5 @@ app.get('/socket', function(req, res, next){
 
 var server = server.listen(app.get('port'), function(){
 	console.log('WEB started.');
-    contrab.start();
+    contrab.start(io);
 });

@@ -1,6 +1,7 @@
 'use strict';
 
-var map = null;
+var map = null,
+    socket = io();
 
 function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
@@ -26,18 +27,14 @@ angular.module('app').controller('ctrl', ['$scope', '$interval', '$http', 'Const
     }
   });
 
-  setInterval(function(){
-    $scope.routers.forEach(function(item, key){
-      item._marker.setLabel(Math.floor(Math.random() * 999))
-    });
-  }, 1000);
-
 	function initMap(){
 		map.setCenter(new google.maps.LatLng(Constant.initialPosition.Lat, Constant.initialPosition.Lng));
 	  $scope.printRouter();
 	};
 
 	angular.extend($scope, {
+    localizations: [],
+    badges: [],
 		routers: [],
     modalRouterObject: null,
     modalUserObject: null,
@@ -50,14 +47,25 @@ angular.module('app').controller('ctrl', ['$scope', '$interval', '$http', 'Const
     if(map !== null) $scope.printRouter();
   });
 
-  $scope.getUser = function(){
+  $scope.getUser = function(id){
     $scope.modalUser = true;
     $scope.modalRouter = false;
+    $http.get('/badge/' + id).success(function(data){
+      $scope.modalUserObject = data.data;
+    });
   };
 
   $scope.cancelRouter = function(){
     $scope.modalRouter = false;
     $scope.modalRouterObject = null;
+  };
+
+  $scope.getBadges = function(mac){
+    var badges = $scope.localizations[mac] === undefined ? [] : $scope.localizations[mac].badges;
+    $scope.modalRouterObject = { mac: mac, badges: [] };
+    $http.post('/badge', { badges: badges }).success(function(data){
+      $scope.modalRouterObject.badges = data.data;
+    });
   };
 
   $scope.cancelUser = function(){
@@ -93,9 +101,7 @@ angular.module('app').controller('ctrl', ['$scope', '$interval', '$http', 'Const
       });
       item._polygons.setMap(map);
       item._polygons.addListener('click', function() {
-        $scope.modalRouterObject = {
-          mac: item.mac
-        };
+        $scope.getBadges(item.mac);
         $scope.modalRouter = true;
         if (!$scope.$$phase) {
           $scope.$apply();
@@ -104,4 +110,12 @@ angular.module('app').controller('ctrl', ['$scope', '$interval', '$http', 'Const
       $scope.writeText(item);
     });
   };
+
+  socket.on('news', function(data) {
+    $scope.localizations = data;
+    $scope.routers.forEach(function(item, key){
+      item._marker.setLabel(data[item.mac] === undefined ? '0' : data[item.mac].badges.length.toString());
+    });
+  });
+
 }])

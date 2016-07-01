@@ -36,11 +36,11 @@
 		        		</tr>
 		        	</thead>
 		        	<tbody>
-		        		<tr ng-repeat="user in routers">
-		        			<td>{{user.mac}}</td>
-									<td class="text-center">{{user.polygons.length}}</td>
+		        		<tr ng-repeat="badge in modalRouterObject.badges">
+		        			<td>{{badge.employeeFirstName}}</td>
+									<td class="text-center">{{badge.companyName}}</td>
 									<td class="text-center">
-										<button class="btn btn-primary btn-xs" ng-click="getUser(user)">
+										<button class="btn btn-primary btn-xs" ng-click="getUser(badge._id)">
 											<i class="glyphicon glyphicon-user"></i>
 										</button>
 									</td>
@@ -59,12 +59,12 @@
 		    <div class="modal-content">
 		      <div class="modal-header">
 		        <button type="button" class="close" ng-click="cancelUser()"><span aria-hidden="true">&times;</span></button>
-		        <h4 class="modal-title text-center">Fabrício Ronchi</h4>
+		        <h4 class="modal-title text-center">{{modalUserObject.employeeFirstName}}</h4>
 		      </div>
 		      <div class="modal-body modal-body-user">
 		      	<div class="col-sm-12">
 		      		<div class="text-center">
-		      			<img src="https://avatars2.githubusercontent.com/u/4234986?v=3&s=460" class="img-user img-circle">
+		      			<img ng-src="data:image/png;base64,{{modalUserObject.employeePicture}}" class="img-user img-circle">
 		      		</div>
               <table class="table no-margin-bottom">
                 <tbody>
@@ -74,7 +74,7 @@
                   </tr>
                 	<tr>
                   	<td class="td-user"><strong>Empresa:</strong></td>
-                    <td>WEG Equipamentos Elétricos</td>
+                    <td>{{modalUserObject.companyName}}</td>
                   </tr>
                   <tr>
                     <td class="td-user"><strong>Data de nascimento:</strong></td>
@@ -109,6 +109,7 @@
 		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAa79lG1wms2diBsx5jZiqGH4gm1rHRg88"></script>
 		<script type="text/javascript" src="/app/vendor/google-maps/gmaps-labels.min.js"></script>
 		<script src="/app/vendor/angular/angular.min.js"></script>
+		<script src="/socket.io/socket.io.js"></script>
 		<script src="/app/js/init.js"></script>
 		<script src="/app/js/index.js"></script>
 	</body>

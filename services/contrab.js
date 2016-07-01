@@ -3,25 +3,24 @@
 var Localization = require('../models/localization');
 
 module.exports = {
-	start: function(req, res, next){
+	start: function(io){
 		setInterval(function(){
-
-			var ll = new Localization();
-	ll.AP = 'dasdasd',
-  ll.bagge = '#000000';
-  ll.signal = 10;
-  ll.data = new Date();
-  ll.save(function(err, data) {
-  	console.log(err);
-	  console.log('dasdasdadsa');
-	});
-
-
-			Localization.find().exec(function(err, data) {
-				console.log(err);
-		    console.log(data);
+			var filterDate = new Date();
+			Localization.find({
+				date: {
+					$gte: (filterDate.getTime() - 10000)
+				}
+			}).sort([['date', 'desc']]).exec(function(err, data) {
+				var localizations = {}, badges = {};
+				data.forEach(function(item){
+					if(localizations[item.AP] === undefined) localizations[item.AP] = { badges: [] };
+					if(badges[item.badge] === undefined){
+						badges[item.badge] = item.badge;
+						localizations[item.AP].badges.push(item.badge);
+					}
+				});
+				io.sockets.emit('news', localizations);
 		  });
-
-		}, 5000);
+		}, 1000);
 	}
 };

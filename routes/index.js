@@ -6,7 +6,7 @@ var express = require('express'),
 		User = require('../models/user');
 
 router.get('/login', function(req, res, next) {
- res.sendfile('./view/login.html');
+ 	res.sendfile('./view/login.html');
 });
 
 router.post('/login', function(req, res, next) {

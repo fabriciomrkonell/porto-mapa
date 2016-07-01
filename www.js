@@ -18,9 +18,10 @@ var express = require('express'),
     RedisStore = require('connect-redis')(expressSession),
     LocalStrategy = require('passport-local').Strategy,
     service = require('./services/service'),
+    contrab = require('./services/contrab'),
     User = require('./models/user');
 
-mongoose.connect('mongodb://localhost/porto-mapa');
+mongoose.connect('mongodb://10.0.109.113:27017/porto-mapa');
 
 db.on('error', function(){
   console.log('Database: error.');
@@ -64,4 +65,5 @@ app.get('/socket', function(req, res, next){
 
 var server = server.listen(app.get('port'), function(){
 	console.log('WEB started.');
+    contrab.start();
 });

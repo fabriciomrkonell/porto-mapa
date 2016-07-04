@@ -114,7 +114,9 @@ angular.module('app').controller('ctrl', ['$scope', '$interval', '$http', 'Const
   socket.on('news', function(data) {
     $scope.localizations = data;
     $scope.routers.forEach(function(item, key){
-      item._marker.setLabel(data[item.mac] === undefined ? '0' : data[item.mac].badges.length.toString());
+      if(item._marker != undefined){
+        item._marker.setLabel(data[item.mac] === undefined ? '0' : data[item.mac].badges.length.toString());
+      }
     });
   });
 

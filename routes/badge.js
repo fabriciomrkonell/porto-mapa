@@ -7,7 +7,9 @@ var express = require('express'),
 
 router.post('/', function(req, res, next) {
 	Badge.find({
-    mac: req.body.badges
+    mac: {
+      $in: req.body.badges
+    }
   }).select('_id employeeFirstName companyName').exec(function(err, data) {
     if (err) throw console.log({ error: true, message: 'Badge: error.', data: err });
   	res.send({ error: false, message: 'Badge: success.', data: data });

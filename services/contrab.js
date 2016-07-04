@@ -8,7 +8,7 @@ module.exports = {
 			var filterDate = new Date();
 			Localization.find({
 				date: {
-					$gte: (filterDate.getTime() - 10000)
+					$gte: (filterDate.getTime() - 60000)
 				}
 			}).sort([['date', 'desc']]).exec(function(err, data) {
 				var localizations = {}, badges = {};

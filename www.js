@@ -22,9 +22,9 @@ var express = require('express'),
     contrab = require('./services/contrab'),
     User = require('./models/user');
 
-mongoose.connect('mongodb://localhost/porto-mapa');
+//mongoose.connect('mongodb://localhost/porto-mapa');
 //mongoose.connect('mongodb://10.0.109.113:27017/porto-mapa');
-//mongoose.connect('mongodb://192.168.1.189:27017/porto-mapa');
+mongoose.connect('mongodb://192.168.1.189:27017/porto-mapa');
 
 db.on('error', function(){
   console.log('Database: error.');

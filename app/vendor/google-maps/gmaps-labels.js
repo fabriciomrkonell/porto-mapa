@@ -65,8 +65,10 @@ LabelOverlay.prototype.onAdd = function(){
 
 LabelOverlay.prototype.setLabel = function(label){
 	var div = this._div;
-	div.innerHTML = label;
-	this.draw();
+	if(div){
+		div.innerHTML = label;
+		this.draw();
+	}
 }
 
 LabelOverlay.prototype.draw = function(){

@@ -33,11 +33,12 @@ html, body {
 }
 
 .form-control-input {
-  width: 200px !important;
+  width: 250px !important;
 }
 
 .img-user {
 	width: 170px;
+	height: 150px;
 	margin-bottom: 15px;
 }
 
@@ -74,4 +75,13 @@ html, body {
 		1.5px -1.5px 0.5px rgba(0,0,0,0.5),
 		-1.5px 1.5px 0.5px rgba(0,0,0,0.5),
 		1.5px 1.5px 0.5px rgba(0,0,0,0.5);
+}
+
+.modal-badges{
+	overflow-x: auto;
+  height: 600px;
+}
+
+.img-form{
+	width: 18px;
 }

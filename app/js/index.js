@@ -36,6 +36,7 @@ angular.module('app').controller('ctrl', ['$scope', '$interval', '$http', 'Const
     localizations: [],
     badges: [],
 		routers: [],
+    filterBadge: '',
     modalRouterObject: null,
     modalUserObject: null,
     modalRouter: false,
@@ -64,7 +65,10 @@ angular.module('app').controller('ctrl', ['$scope', '$interval', '$http', 'Const
     var badges = $scope.localizations[mac] === undefined ? [] : $scope.localizations[mac].badges;
     $scope.modalRouterObject = { mac: mac, badges: [] };
     $http.post('/badge', { badges: badges }).success(function(data){
+      $scope.loaderBadge = false;
       $scope.modalRouterObject.badges = data.data;
+    }).error(function(){
+      $scope.loaderBadge = false;
     });
   };
 
@@ -101,6 +105,7 @@ angular.module('app').controller('ctrl', ['$scope', '$interval', '$http', 'Const
       });
       item._polygons.setMap(map);
       item._polygons.addListener('click', function() {
+        $scope.loaderBadge = true;
         $scope.getBadges(item.mac);
         $scope.modalRouter = true;
         if (!$scope.$$phase) {
@@ -109,6 +114,10 @@ angular.module('app').controller('ctrl', ['$scope', '$interval', '$http', 'Const
       });
       $scope.writeText(item);
     });
+  };
+
+  $scope.hasUser = function(user){
+    return angular.isObject($scope.modalUserObject) === user;
   };
 
   socket.on('news', function(data) {

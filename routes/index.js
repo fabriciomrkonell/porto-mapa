@@ -9,6 +9,10 @@ router.get('/login', function(req, res, next) {
  	res.sendfile('./view/login.html');
 });
 
+router.get('/new', function(req, res, next) {
+ 	res.sendfile('./view/new.html');
+});
+
 router.post('/login', function(req, res, next) {
    passport.authenticate('local', function(err, user, info) {
     if (err) { return next(err); }

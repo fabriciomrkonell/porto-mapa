@@ -10,78 +10,12 @@
     <link rel="stylesheet" type="text/css" href="/app/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/app/css/new.css">
   </head>
-  <body>
+  <body class="ng-cloak" ng-controller="ctrl">
   	<img src="/app/img/backgroud.png" />
   	<canvas id="map"></canvas>
+		<script src="/app/vendor/angular/angular.min.js"></script>
+  	<script src="/socket.io/socket.io.js"></script>
     <script src="/app/vendor/fabric/js/fabric.min.js"></script>
-    <script type="text/javascript">
-
-    	var __width = 500, __height = 500;
-
-    	var itens = [{
-				__top: 320,
-				__left: 450,
-				radius: 20,
-				fill: 'green'
-    	}, {
-				__top: 120,
-				__left: 80,
-				radius: 20,
-				fill: 'red'
-    	}];
-
-    	var canvas = null;
-
-			function rezise() {
-				var size = getSize(), map = document.getElementById('map');
-				if(canvas === null) canvas = this.__canvas = new fabric.Canvas('map'), start();
-				map.style.width = size.width + 'px';
-				map.style.height = size.height + 'px';
-				map.width = size.width;
-				map.height = size.height;
-				update(size);
-				canvas.renderAll();
-			};
-
-			function getSize() {
-				return {
-				  width: window.innerWidth || document.body.clientWidth,
-				  height: window.innerHeight || document.body.clientHeight
-				}
-			};
-
-			function update(size) {
-				canvas.getObjects().map(function(item) {
-					var circle = item.item(0);
-					var width = (circle.__left / __width) * size.width;
-					var height = (circle.__top / __height) * size.height;
-					item.left = width;
-					item.top = height;
-				});
-			};
-
-			function start(){
-				itens.forEach(function(item) {
-					canvas.add(new fabric.Group([ new fabric.Circle({
-					  __top: item.__top,
-			    	__left: item.__left,
-			    	radius: 20,
-			    	fill: item.fill
-					}), new fabric.Text('1', {
-					  fontSize: 30,
-					  fill: 'white',
-					  left: 13,
-					  top: 3
-					})]));
-				});
-			};
-
-			window.onresize = function(event) {
-		    rezise();
-			};
-
-			rezise();
-
-    </script>
+    <script src="/app/js/new.js"></script>
   </body>
 </html>
